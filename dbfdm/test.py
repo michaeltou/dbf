@@ -39,7 +39,7 @@ except DbfWarning:
     warnings_are_exceptions = True
 
 
-print("\nTesting dbf version %d.%02d.%03d on %s with Python %s\n" % (
+print("\nTesting dbfdm version %d.%02d.%03d on %s with Python %s\n" % (
     dbf.version[:3] + (sys.platform, sys.version) ))
 
 
@@ -2802,7 +2802,7 @@ class TestDbfCreation(TestCase):
     "Testing table creation..."
 
     def test_db3_memory_tables(self):
-        "dbf tables in memory"
+        "dbfdm tables in memory"
         fields = unicodify(['name C(25)', 'hiredate D', 'male L', 'wisdom M', 'qty N(3,0)', 'weight F(7,3)'])
         for i in range(1, len(fields)+1):
             for fieldlist in combinate(fields, i):
@@ -2812,7 +2812,7 @@ class TestDbfCreation(TestCase):
                 self.assertTrue(all([type(x) is unicode for x in table.field_names]))
 
     def test_db3_disk_tables(self):
-        "dbf table on disk"
+        "dbfdm table on disk"
         fields = unicodify(['name C(25)', 'hiredate D', 'male L', 'wisdom M', 'qty N(3,0)', 'weight F(7,3)'])
         for i in range(1, len(fields)+1):
             for fieldlist in combinate(fields, i):
@@ -3007,7 +3007,7 @@ class TestDbfRecords(TestCase):
         self.assertEqual(table.first_record[u'name':u'qty'], table[0][:3])
 
     def test_dbf_adding_records(self):
-        "dbf table:  adding records"
+        "dbfdm table:  adding records"
         table = self.dbf_table
         table.open(mode=READ_WRITE)
         namelist = []
@@ -3719,7 +3719,7 @@ class TestDbfRecords(TestCase):
         "commit and rollback of flux record (implementation detail)"
         table = self.dbf_table
         table.open(mode=READ_WRITE)
-        table.append(('dbf master', True, 77, Date(2012, 5, 20), "guru of some things dbf-y"))
+        table.append(('dbfdm master', True, 77, Date(2012, 5, 20), "guru of some things dbfdm-y"))
         record = table[-1]
         old_data = dbf.scatter(record)
         record._start_flux()
@@ -3754,7 +3754,7 @@ class TestDbfRecords(TestCase):
                     paid=False,
                     qty=69,
                     orderdate=datetime.date(2011, 1, 1),
-                    desc='guru of some things dbf-y',
+                    desc='guru of some things dbfdm-y',
                     ))
         self.assertNotEqual(old_data, dbf.scatter(record))
 
@@ -3826,7 +3826,7 @@ class TestDbfRecordTemplates(TestCase):
 class TestDbfFunctions(TestCase):
 
     def setUp(self):
-        "create a dbf and vfp table"
+        "create a dbfdm and vfp table"
         self.empty_dbf_table = Table(
             os.path.join(tempdir, 'emptytemptable'),
             'name C(25); paid L; qty N(11,5); orderdate D; desc M', dbf_type='db3'
@@ -3931,7 +3931,7 @@ class TestDbfFunctions(TestCase):
         self.vfp_table.close()
 
     def test_add_fields_to_dbf_table(self):
-        "dbf table:  adding and deleting fields"
+        "dbfdm table:  adding and deleting fields"
         table = self.dbf_table
         table.open(mode=READ_WRITE)
         dbf._debug = True
@@ -4838,7 +4838,7 @@ class TestDbfFunctions(TestCase):
 class TestDbfNavigation(TestCase):
 
     def setUp(self):
-        "create a dbf and vfp table"
+        "create a dbfdm and vfp table"
         self.dbf_table = table = Table(
             os.path.join(tempdir, 'temptable'),
             'name C(25); paid L; qty N(11,5); orderdate D; desc M', dbf_type='db3'
@@ -5137,7 +5137,7 @@ class TestDbfLists(TestCase):
     "DbfList tests"
 
     def setUp(self):
-        "create a dbf table"
+        "create a dbfdm table"
         self.dbf_table = table = Table(
             os.path.join(tempdir, 'temptable'),
             'name C(25); paid L; qty N(11,5); orderdate D; desc M', dbf_type='db3'
@@ -5433,7 +5433,7 @@ class TestReadWriteDefaultOpen(TestCase):
     "test __enter__/__exit__"
 
     def setUp(self):
-        "create a dbf table"
+        "create a dbfdm table"
         self.dbf_table = table = Table(
             os.path.join(tempdir, 'temptable'),
             'name C(25); paid L; qty N(11,5); orderdate D; desc M', dbf_type='db3'
@@ -5491,7 +5491,7 @@ class TestMisc(TestCase):
                 dbf_type='db3',
                 )
         self.table_dbf = Table(
-                os.path.join(tempdir, 'dbf_table.dbf'),
+                os.path.join(tempdir, 'dbf_table.dbfdm'),
                 'name C(25); paid L; qty N(11,5); orderdate D; desc M',
                 dbf_type='db3',
                 )
@@ -5525,7 +5525,7 @@ class TestWhatever(TestCase):
     "move tests here to run one at a time while debugging"
 
     def setUp(self):
-        "create a dbf and vfp table"
+        "create a dbfdm and vfp table"
         self.dbf_table = table = Table(
             os.path.join(tempdir, 'temptable'),
             'name C(25); paid L; qty N(11,5); orderdate D; desc M', dbf_type='db3'

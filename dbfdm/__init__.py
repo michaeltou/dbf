@@ -36,7 +36,7 @@ default_codepage = None     # will be set by tables module (defaults to ascii)
 default_type = 'db3'        # lowest common denominator
 input_decoding = 'ascii'
 
-# make dbf module importabl internally (i.e. from . import dbf)
+# make dbfdm module importabl internally (i.e. from . import dbfdm)
 import sys as _sys
 dbf = _sys.modules[__package__]
 
@@ -47,7 +47,7 @@ pql_user_functions = dict()
 ## signature:_meta of template records
 _Template_Records = dict()
 
-# from dbf.api import *
+# from dbfdm.api import *
 class fake_module(object):
     def __init__(self, name, *args):
         self.name = name

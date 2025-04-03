@@ -5,14 +5,14 @@ except ImportError:
     pass
 from distutils.core import setup
 
-#html_docs = glob('dbf/html/*')
+#html_docs = glob('dbfdm/html/*')
 
 long_desc="""
 Currently supports dBase III, Clipper, FoxPro, and Visual FoxPro tables. Text is returned as unicode, and codepage settings in tables are honored. Memos and Null fields are supported.  Documentation needs work, but author is very responsive to e-mails.
 
 Not supported: index files (but can create tempory non-file indexes), auto-incrementing fields, and Varchar fields.
 
-Installation:  `pip install dbf`
+Installation:  `pip install dbfdm`
 """
 
 py2_only = ()
@@ -20,21 +20,21 @@ py3_only = ()
 make = []
 
 data = dict(
-        name='dbf',
+        name='dbfdm',
         version='0.99.11a1',
         license='BSD License',
-        description='Pure python package for reading/writing dBase, FoxPro, and Visual FoxPro .dbf files (including memos)',
+        description='Pure python package for reading/writing dBase, FoxPro, and Visual FoxPro .dbfdm files (including memos)',
         long_description=long_desc,
         url='https://github.com/ethanfurman/dbf',
-        packages=['dbf', ],
+        packages=['dbfdm', ],
         package_data={
-           'dbf' : [
+           'dbfdm' : [
                'LICENSE',
                'README.md',
                'WHATSNEW',
                ]
            },
-        provides=['dbf'],
+        provides=['dbfdm'],
         install_requires=['aenum'],
         author='Ethan Furman',
         author_email='ethan@stoneleaf.us',

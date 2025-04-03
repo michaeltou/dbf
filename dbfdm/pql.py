@@ -96,7 +96,7 @@ def pql_criteria(records, criteria):
     function = """def func(records):
     '''%s
     '''
-    _matched = dbf.List()
+    _matched = dbfdm.List()
     for _rec in records:
         %s
 
@@ -112,7 +112,7 @@ def pql_criteria(records, criteria):
     criteria = criteria.replace('recno()', 'recno(_rec)').replace('is_deleted()', 'is_deleted(_rec)')
     fields = '\n        '.join(['%s = _rec.%s' % (field.lower(), field) for field in fields])
     g = dict()
-    g['dbf'] = dbf.api
+    g['dbfdm'] = dbf.api
     g.update(dbf.pql_user_functions)
     function %= (criteria, fields, criteria)
     execute(function, g)
@@ -127,14 +127,14 @@ def pql_cmd(command, field_names):
     '''
     _changed = 0
     for _rec in records:
-        _tmp = dbf.create_template(_rec)
+        _tmp = dbfdm.create_template(_rec)
         %s
 
         %s
 
         %s
         if _tmp != _rec:
-            dbf.gather(_rec, _tmp)
+            dbfdm.gather(_rec, _tmp)
             _changed += 1
     return _changed"""
     fields = []
@@ -145,7 +145,7 @@ def pql_cmd(command, field_names):
     pre_fields = '\n        '.join(['%s = _tmp.%s' % (field.lower(), field) for field in fields])
     post_fields = '\n        '.join(['_tmp.%s = %s' % (field, field).lower() for field in fields])
     g = dbf.pql_user_functions.copy()
-    g['dbf'] = dbf.api
+    g['dbfdm'] = dbf.api
     g['recno'] = recno
     g['create_template'] = create_template
     g['gather'] = gather

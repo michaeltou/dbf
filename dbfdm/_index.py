@@ -159,12 +159,12 @@ class ContainedIndex(_Navigation):
             if record == (self[i]):
                 return i
         else:
-            raise NotFoundError("dbf.Index.index(x): x not in Index", data=record)
+            raise NotFoundError("dbfdm.Index.index(x): x not in Index", data=record)
     def query(self, criteria):
         """criteria is a callback that returns a truthy value for matching record"""
         return pql(self, criteria)
     def search(self, match, partial=False):
-        "returns dbf.List of all (partially) matching records"
+        "returns dbfdm.List of all (partially) matching records"
         result = List()
         if not isinstance(match, tuple):
             match = (match, )

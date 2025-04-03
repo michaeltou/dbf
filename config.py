@@ -7,7 +7,7 @@ LOGICAL_BAD_IS_NONE = True
 ## treat non-unicode data as ...
 input_decoding = 'utf-8'
 
-## if no codepage specified on dbf creation, use this
+## if no codepage specified on dbfdm creation, use this
 default_codepage = 'ascii'
 
 ## default format if none specified

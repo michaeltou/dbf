@@ -306,8 +306,8 @@ class Field(_ZeroEnum):
 @_export(_module)
 class DbfLocation(_ZeroEnum):
     __order__ = 'IN_MEMORY ON_DISK'
-    IN_MEMORY = "dbf is kept in memory (disappears at program end)"
-    ON_DISK = "dbf is kept on disk"
+    IN_MEMORY = "dbfdm is kept in memory (disappears at program end)"
+    ON_DISK = "dbfdm is kept on disk"
 
 @_export(_module)
 class DbfStatus(_ZeroEnum):

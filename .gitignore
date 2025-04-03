@@ -8,8 +8,8 @@
 FoxPro.zip
 cc/
 clicketyclick/
-dbf/docs/
-dbf/__pycache__/
+dbfdm/docs/
+dbfdm/__pycache__/
 dist/
 emptytemptable
 emptytemptable.dbt

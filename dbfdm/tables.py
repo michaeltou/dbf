@@ -50,7 +50,7 @@ class NullHandler(logging.Handler):
     def createLock(self):
         self.lock = None
 
-logger = logging.getLogger('dbf')
+logger = logging.getLogger('dbfdm')
 logger.addHandler(NullHandler())
 
 temp_dir = os.environ.get("DBF_TEMP") or os.environ.get("TMP") or os.environ.get("TEMP") or ""
@@ -482,7 +482,7 @@ class _Navigation(object):
 class Record(object):
     """
     Provides routines to extract and save data within the fields of a
-    dbf record.
+    dbfdm record.
     """
 
     __slots__ = ('_recnum', '_meta', '_data', '_old_data', '_dirty',
@@ -869,7 +869,7 @@ class Record(object):
 
 class RecordTemplate(object):
     """
-    Provides routines to mimic a dbf record.
+    Provides routines to mimic a dbfdm record.
     """
 
     __slots__ = ('_meta', '_data', '_old_data', '_memos', '_write_to_disk', '__weakref__')
@@ -1135,7 +1135,7 @@ class RecordTemplate(object):
 
 class RecordVaporWare(object):
     """
-    Provides routines to mimic a dbf record, but all values are non-existent.
+    Provides routines to mimic a dbfdm record, but all values are non-existent.
     """
 
     __slots__ = ('_recno', '_sequence')
@@ -1436,7 +1436,7 @@ class DbfCsv(csv.Dialect):
     quotechar = '"'
     skipinitialspace = True
     quoting = csv.QUOTE_NONNUMERIC
-csv.register_dialect('dbf', DbfCsv)
+csv.register_dialect('dbfdm', DbfCsv)
 
 
 class _DeadObject(object):
@@ -1487,7 +1487,10 @@ def pack_str(string):
     """
     if len(string) > 10:
         raise DbfError("Maximum string size is ten characters -- %s has %d characters" % (string, len(string)))
-    return struct.pack('11s', string.upper())
+    # 这个原来的逻辑
+    # return struct.pack('11s', string.upper())
+    # 2025-04-03 douming 修改，原来的逻辑自动将字符转成大写，我这里改成不进行大写转换
+    return struct.pack('11s', string)
 
 def unpack_short_int(bytes, bigendian=False):
     """
@@ -2351,7 +2354,7 @@ class Index(_Navigation):
             if record == (self[i]):
                 return i
         else:
-            raise NotFoundError("dbf.Index.index(x): x not in Index", data=record)
+            raise NotFoundError("dbfdm.Index.index(x): x not in Index", data=record)
 
     def index_search(self, match, start=None, stop=None, nearest=False, partial=False):
         """
@@ -2371,14 +2374,14 @@ class Index(_Navigation):
         if loc == len(self._values):
             if nearest:
                 return IndexLocation(loc, False)
-            raise NotFoundError("dbf.Index.index_search(x): x not in index", data=match)
+            raise NotFoundError("dbfdm.Index.index_search(x): x not in index", data=match)
         if self._values[loc] == match \
         or partial and self._partial_match(self._values[loc], match):
             return IndexLocation(loc, True)
         elif nearest:
             return IndexLocation(loc, False)
         else:
-            raise NotFoundError("dbf.Index.index_search(x): x not in Index", data=match)
+            raise NotFoundError("dbfdm.Index.index_search(x): x not in Index", data=match)
 
     def key(self, record):
         result = self._key(record)
@@ -2395,7 +2398,7 @@ class Index(_Navigation):
 
     def search(self, match, partial=False):
         """
-        returns dbf.List of all (partially) matching records
+        returns dbfdm.List of all (partially) matching records
         """
         self._nav_check()
         result = List()
@@ -2418,7 +2421,7 @@ class Index(_Navigation):
 
 class Relation(object):
     """
-    establishes a relation between two dbf tables (not persistent)
+    establishes a relation between two dbfdm tables (not persistent)
     """
 
     relations = {}
@@ -2447,13 +2450,13 @@ class Relation(object):
             src_table_name, src_field_name = src_names
         else:
             src_table_name, src_field_name = src_table.filename, src_field
-            if src_table_name[-4:].lower() == '.dbf':
+            if src_table_name[-4:].lower() == '.dbfdm':
                 src_table_name = src_table_name[:-4]
         if tgt_names:
             tgt_table_name, tgt_field_name = tgt_names
         else:
             tgt_table_name, tgt_field_name = tgt_table.filename, tgt_field
-            if tgt_table_name[-4:].lower() == '.dbf':
+            if tgt_table_name[-4:].lower() == '.dbfdm':
                 tgt_table_name = tgt_table_name[:-4]
         relation = cls.relations.get(((src_table, src_field), (tgt_table, tgt_field)))
         if relation is not None:
@@ -2589,10 +2592,10 @@ class IndexLocation(long):
 
 class FieldInfo(NamedTuple):
     """
-    tuple with named attributes for representing a field's dbf type,
+    tuple with named attributes for representing a field's dbfdm type,
     length, decimal portion, and python class
     """
-    field_type = 0, "dbf field type (C, N, D, etc.)"
+    field_type = 0, "dbfdm field type (C, N, D, etc.)"
     length = 1, "overall length of field"
     decimal = 2, "number of decimal places for numeric fields"
     py_type = 3, "Python class for this field (Char, Logical, default, etc.)"
@@ -2670,11 +2673,11 @@ class Iter(_Navigation):
 
 class Table(_Navigation):
     """
-    Base class for dbf style tables
+    Base class for dbfdm style tables
     """
 
     _version = 'basic memory table'
-    _versionabbr = 'dbf'
+    _versionabbr = 'dbfdm'
     _max_fields = 255
     _max_records = 4294967296
 
@@ -2764,8 +2767,8 @@ class Table(_Navigation):
         dfd = None                # file handle
         fields = None             # field names
         field_count = 0           # number of fields
-        field_types = None        # dictionary of dbf type field specs
-        filename = None           # name of .dbf file
+        field_types = None        # dictionary of dbfdm type field specs
+        filename = None           # name of .dbfdm file
         ignorememos = False       # True when memos should be ignored
         memoname = None           # name of .dbt/.fpt file
         memo_size = None           # size of blocks in memo file
@@ -2820,7 +2823,7 @@ class Table(_Navigation):
 
         @property
         def extra(self):
-            "extra dbf info (located after headers, before data records)"
+            "extra dbfdm info (located after headers, before data records)"
             fieldblock = self._data[32:]
             for i in range(len(fieldblock) // 32 + 1):
                 cr = i * 32
@@ -2942,7 +2945,7 @@ class Table(_Navigation):
         @property
         def version(self):
             """
-            dbf version
+            dbfdm version
             """
             return self._data[0]
 
@@ -3260,7 +3263,7 @@ class Table(_Navigation):
                  dbf_type=None, on_disk=True, unicode_errors='strict'
                  ):
         """
-        open/create dbf file
+        open/create dbfdm file
         filename should include path if needed
         field_specs can be either a ;-delimited string or a list of strings
         memo_size is always 512 for db3 memos
@@ -3330,12 +3333,12 @@ class Table(_Navigation):
                 # use filename without the '.'
                 search_name = search_memo = base
                 matches = glob(search_name)
-            elif ext.lower() == '.dbf':
+            elif ext.lower() == '.dbfdm':
                 # use filename as-is
                 matches = glob(filename)
                 search_memo = base
             else:
-                meta.filename = filename + '.dbf'
+                meta.filename = filename + '.dbfdm'
                 search_name = filename + '.[Db][Bb][Ff]'
                 search_memo = filename
                 matches = glob(search_name)
@@ -3590,7 +3593,7 @@ class Table(_Navigation):
     @property
     def version(self):
         """
-        returns the dbf type of the table
+        returns the dbfdm type of the table
         """
         return self._version
 
@@ -3604,11 +3607,11 @@ class Table(_Navigation):
         if py_ver < (3, 0):
             if isinstance(field_specs, bytes):
                 if dbf.input_decoding is None:
-                    raise DbfError('field specifications must be unicode, not bytes (or set dbf.input_decoding)')
+                    raise DbfError('field specifications must be unicode, not bytes (or set dbfdm.input_decoding)')
                 field_specs = field_specs.decode(dbf.input_decoding)
             if isinstance(field_specs, list) and any(isinstance(t, bytes) for t in field_specs):
                 if dbf.input_decoding is None:
-                    raise DbfError('field specifications must be unicode, not bytes (or set dbf.input_decoding)')
+                    raise DbfError('field specifications must be unicode, not bytes (or set dbfdm.input_decoding)')
                 fs = []
                 for text in field_specs:
                     if isinstance(text, bytes):
@@ -3986,7 +3989,7 @@ class Table(_Navigation):
             if record == (self[i]):
                 return i
         else:
-            raise NotFoundError("dbf.Table.index(x): x not in table", data=record)
+            raise NotFoundError("dbfdm.Table.index(x): x not in table", data=record)
 
     def new(self, filename, field_specs=None, memo_size=None, ignore_memos=None, codepage=None, default_data_types=None, field_data_types=None, on_disk=True):
         """
@@ -4026,7 +4029,7 @@ class Table(_Navigation):
         (re)opens disk table, (re)initializes data structures
         """
         if mode not in (READ_WRITE, READ_ONLY):
-            raise DbfError("mode for open must be dbf.READ_ONLY or dbf.READ_WRITE, not %r" % mode)
+            raise DbfError("mode for open must be dbfdm.READ_ONLY or dbfdm.READ_WRITE, not %r" % mode)
         meta = self._meta
         if meta.status == mode:
             return self     # no-op
@@ -4042,7 +4045,7 @@ class Table(_Navigation):
         if not header.version in self._supported_tables:
             dfd.close()
             dfd = None
-            raise DbfError("Unsupported dbf type: %s [%x]" % (version_map.get(header.version, 'Unknown: %s' % header.version), header.version))
+            raise DbfError("Unsupported dbfdm type: %s [%x]" % (version_map.get(header.version, 'Unknown: %s' % header.version), header.version))
         fieldblock = array('B', dfd.read(header.start - 32))
         for i in range(len(fieldblock) // 32 + 1):
             fieldend = i * 32
@@ -4115,13 +4118,15 @@ class Table(_Navigation):
         """
         renames an existing field
         """
-        oldname = oldname.upper()
-        newname = newname.upper()
+        # 2025-04-03 ，modifed by douming. 取消大写的转换，保留原来的大小写
+        # oldname = oldname.upper()
+        # newname = newname.upper()
         meta = self._meta
         if meta.status != READ_WRITE:
             raise DbfError('%s not in read/write mode, unable to change field names' % meta.filename)
-        if self:
-            self.create_backup()
+        # 2025-04-03 ，modifed by douming.不创建备份文件
+        # if self:
+            # self.create_backup()
         if not oldname in self._meta.user_fields:
             raise FieldMissingError("field --%s-- does not exist -- cannot rename it." % oldname)
         if newname[0] == '_' or newname[0].isdigit() or not newname.replace('_', '').isalnum():
@@ -5289,7 +5294,7 @@ class List(_Navigation):
             if record == (self[i]):
                 return i
         else:
-            raise NotFoundError("dbf.List.index(x): x not in List", data=record)
+            raise NotFoundError("dbfdm.List.index(x): x not in List", data=record)
 
     def insert(self, i, record):
         self._still_valid_check()

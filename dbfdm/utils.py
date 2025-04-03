@@ -68,7 +68,7 @@ def ensure_unicode(value):
         value = value.decode(dbf.input_decoding)
     return value
 
-def export(table_or_records, filename=None, field_names=None, format='csv', header=True, dialect='dbf', encoding=None, ignore_errors=False, strip_nulls=False):
+def export(table_or_records, filename=None, field_names=None, format='csv', header=True, dialect='dbfdm', encoding=None, ignore_errors=False, strip_nulls=False):
     """
     writes the records using CSV or tab-delimited format, using the filename
     given if specified, otherwise the table name
@@ -91,7 +91,7 @@ def export(table_or_records, filename=None, field_names=None, format='csv', head
         encoding = table._meta.codepage
     header_names = field_names
     base, ext = os.path.splitext(filename)
-    if ext.lower() in ('', '.dbf'):
+    if ext.lower() in ('', '.dbfdm'):
         filename = base + "." + format
     with codecs.open(filename, 'w', encoding=encoding) as fd:
         if format == 'csv':
@@ -382,7 +382,7 @@ def structure(table_name, field=None):
 
 def table_type(filename):
     """
-    returns text representation of a table's dbf version
+    returns text representation of a table's dbfdm version
     """
     actual_filename = None
     search_name = None
@@ -391,7 +391,7 @@ def table_type(filename):
         # use filename without the '.'
         search_name = base
         matches = glob(search_name)
-    elif ext.lower() == '.dbf':
+    elif ext.lower() == '.dbfdm':
         # use filename as-is
         search_name = filename
         matches = glob(search_name)
@@ -413,7 +413,7 @@ def table_type(filename):
     fd.close()
     fd = None
     if not version in dbf.tables.version_map:
-        raise dbf.DbfError("Unknown dbf type: %s (%x)" % (version, version))
+        raise dbf.DbfError("Unknown dbfdm type: %s (%x)" % (version, version))
     return version, dbf.tables.version_map[version]
 
 def undelete(record):
